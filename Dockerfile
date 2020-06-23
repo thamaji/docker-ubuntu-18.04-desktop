@@ -56,6 +56,7 @@ RUN set -x \
     && apt-get update -qq \
     && apt-get install -y -qq --no-install-recommends \
         dbus-x11 \
+        x11-xserver-utils \
         xvfb \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
     && install -o root -g root -m 0755 -d /var/run/dbus \
@@ -75,7 +76,7 @@ RUN set -x \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
     && { \
         echo '[program:x11vnc]'; \
-        echo 'command=/usr/bin/x11vnc -xkb -forever -shared'; \
+        echo 'command=/usr/bin/x11vnc -noxrecord -noxfixes -noxdamage -xkb -forever -shared'; \
     } > /etc/supervisor/conf.d/x11vnc.conf
 EXPOSE 5900
 
@@ -101,12 +102,17 @@ EXPOSE 8080
 RUN set -x \
     && apt-get update -qq \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+        at-spi2-core \
+        elementary-icon-theme \
         exo-utils \
         fonts-noto-cjk \
         fonts-noto-color-emoji \
         xfce4 \
         xfce4-settings \
-        elementary-icon-theme \
+        xterm \
+    && apt-get purge -y \
+        pm-utils \
+        xscreensaver* \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
     && echo "startxfce4" > /etc/skel/.xsession
 
@@ -125,8 +131,8 @@ RUN set -x \
 RUN set -x \
     && apt-get update -qq \
     && apt-get install -y -qq --no-install-recommends \
-        mousepad \
         firefox \
+        mousepad \
         thunderbird \
         xfce4-terminal \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*

@@ -8,6 +8,7 @@ if [ ! $(getent group $(id -g)) ]; then
         user
 fi
 
+HOME=/root
 if [ ! $(getent passwd $(id -u)) ]; then
     HOME=/home/user
     useradd \
@@ -18,19 +19,20 @@ if [ ! $(getent passwd $(id -u)) ]; then
         --shell /bin/bash \
         user
 fi
+export HOME
 
 sudo chmod u-s /usr/sbin/useradd
 sudo chmod u-s /usr/sbin/groupadd
 
 # なにかと起動
-sudo /usr/bin/supervisord
+sudo /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 
 # 起動待ち
 sleep 3
 
 # ↓でたしかに設定ファイルは変わるんだけど、反映されない。。
-xfconf-query -c xsettings -p /Net/ThemeName -s Xfce-flat
-xfconf-query -c xsettings -p /Net/IconThemeName -s elementary-mono-dark
+# xfconf-query -c xsettings -p /Net/ThemeName -s Xfce-flat
+# xfconf-query -c xsettings -p /Net/IconThemeName -s elementary-mono-dark
 
 unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
